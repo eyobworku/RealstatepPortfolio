@@ -3,6 +3,8 @@ import { readDatabase, writeDatabase } from '@/lib/dbOperations';
 import cloudinary from '@/lib/cloudinary';
 import { revalidatePath } from 'next/cache';
 import streamifier from 'streamifier'
+import { put } from '@vercel/blob';
+
 
 export async function uploadToCloudinary(file: File, folder = 'properties') {
   try {
@@ -24,17 +26,15 @@ export async function uploadToCloudinary(file: File, folder = 'properties') {
   }
 }
 
-export async function uploadStreamToCloudinary(fileBuffer: Buffer, options = {}): Promise<any> {
-  return new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(
-      { resource_type: 'video', ...options },
-      (error, result) => {
-        if (error) return reject(error);
-        resolve(result);
-      }
-    );
-    streamifier.createReadStream(fileBuffer).pipe(stream);
-  });
+export async function uploadStreamToCloudinary(video: File): Promise<any> {
+  try {
+    const {url} = await put(video.name, video, { access: 'public' });
+    console.log('url',url);    
+    return url
+  } catch (error) {
+    console.log('bolb upload error',error);
+    return ''
+  }
 }
 
 

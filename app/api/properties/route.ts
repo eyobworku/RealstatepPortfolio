@@ -44,9 +44,8 @@ export async function POST(request: Request) {
   // Upload video
   let videoData: string = "";
   if (video && video.size > 0) {
-    const videoBuffer = Buffer.from(await video.arrayBuffer());
-    const videoUploadResult = await uploadStreamToCloudinary(videoBuffer);
-    videoData = videoUploadResult.secure_url;
+    const videoUploadResult = await uploadStreamToCloudinary(video);
+    videoData = videoUploadResult;
   }
   const result = await addProperty({title,shortDescription,detailDescription,coverImageData,additionalImagesData,videoData})
   return NextResponse.json(result)
