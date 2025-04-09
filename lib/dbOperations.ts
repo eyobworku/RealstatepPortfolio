@@ -1,21 +1,18 @@
 'use server';
-import { writeFile, readFile } from 'fs/promises';
-import path from 'path';
+import { redis } from './kv';
 
 // Function to read the JSON database
 export async function readDatabase(fileName: string): Promise<any[]> {
   try {
-    const filePath = path.join(process.cwd(), `models/${fileName}`);
-    const data = await readFile(filePath, 'utf8');
-    return JSON.parse(data);
+    const data = await redis.get(fileName) as any[];
+  return data ?? [];
   } catch (error) {
-    // If file doesn't exist or is invalid, return empty array
-    return [];
-  }
+    console.log('read database failed',error);
+    return []
+  }  
 }
 
 // Function to write to the JSON database
 export async function writeDatabase(data: any[], fileName: string): Promise<void> {
-  const filePath = path.join(process.cwd(), `models/${fileName}`);
-  await writeFile(filePath, JSON.stringify(data, null, 2), 'utf8');
+  await redis.set(fileName, data);
 }

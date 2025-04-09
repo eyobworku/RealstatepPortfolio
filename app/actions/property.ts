@@ -52,9 +52,9 @@ export async function addProperty({title,shortDescription,detailDescription,cove
       createdAt: new Date().toISOString(),
     };    
     // Read existing database
-    const properties = await readDatabase('property.json');
+    const properties = await readDatabase('properties');
     properties.push(newProperty);
-    await writeDatabase(properties,'property.json');
+    await writeDatabase(properties,'properties');
     revalidatePath('/ermiadmin');
     
     return { success: true, message: 'Property added!'  };
@@ -65,12 +65,12 @@ export async function addProperty({title,shortDescription,detailDescription,cove
 }
 
 export async function readProperties() {
-  const properties = await readDatabase('property.json');
+  const properties = await readDatabase('properties');
   return properties;
 }
 
 export async function deleteProperty(id: string) {
-  const properties = await readDatabase('property.json');
+  const properties = await readDatabase('properties');
   const updatedProperties = properties.filter((property) => property.id !== id);
-  await writeDatabase(updatedProperties, 'property.json');
+  await writeDatabase(updatedProperties, 'properties');
 }
